@@ -23,7 +23,7 @@ def reset():
 
 # ステップ1
 if st.session_state.page == 1:
-    st.write("### ① 基本の戦法発動時間は？")
+    st.write("### ① 基本の戦法発動時間（秒）は？")
     st.session_state.X1 = st.radio(
         "選択してください",
         [10, 15, 20, 25, 30],
@@ -34,12 +34,12 @@ if st.session_state.page == 1:
 
 # ステップ2
 elif st.session_state.page == 2:
-    st.write("### ② 戦法短縮時間割合(%)は？（10個まで入れて自動で合計）")
+    st.write("### ② 各武将の技能による戦法短縮時間割合（%）は？（10個まで入れて自動で合計）")
     cols = st.columns(5)
     for i in range(10):
         col = cols[i % 5]
         st.session_state.X2_list[i] = col.number_input(
-            f"{i+1}個目", value=0, min_value=0, max_value=100, step=1, key=f"X2_{i}"
+            f"{i+1}個目", value=0.0, min_value=0.0, max_value=100.0, step=0.1, key=f"X2_{i}"
         )
     st.button("次へ", on_click=next_page)
 
