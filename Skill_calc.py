@@ -1,79 +1,95 @@
 import streamlit as st
 
-# ページのステートを初期化
+# ページ構成
+st.set_page_config(page_title="戦法発動計算時間推定", layout="centered")
+
+# セッションステート初期化
 if "page" not in st.session_state:
     st.session_state.page = 1
-if "X1" not in st.session_state:
-    st.session_state.X1 = None
-if "X2_list" not in st.session_state:
-    st.session_state.X2_list = [0]*10
-if "X3" not in st.session_state:
-    st.session_state.X3 = None
 
-# 「次へ」ボタン押下で次ページに進む
-def next_page():
-    st.session_state.page += 1
-
-# 「再計算する」ボタンで初期化
+# 再計算ボタンでリセット
 def reset():
     st.session_state.page = 1
-    st.session_state.X1 = None
-    st.session_state.X2_list = [0]*10
-    st.session_state.X3 = None
+    for key in list(st.session_state.keys()):
+        if key != "page":
+            del st.session_state[key]
 
-# ステップ1
+# ステップ 1: 基本発動時間の選択
 if st.session_state.page == 1:
-    st.write("### ① 基本の戦法発動時間（秒）は？")
-    st.session_state.X1 = st.radio(
-        "選択してください",
-        [10, 15, 20, 25, 30],
-        index=0,
-        horizontal=True
-    )
-    st.button("次へ", on_click=next_page)
+    st.markdown("### ① 基本の戦法発動時間は何秒ですか？")
+    X1 = st.radio("発動時間", [10, 15, 20, 25, 30], key="X1", horizontal=True)
+    if st.button("次へ"):
+        st.session_state.page = 2
 
-# ステップ2
+# ステップ 2: 戦法ゲージ増加量の入力
 elif st.session_state.page == 2:
-    st.write("### ② 各武将の技能による戦法短縮時間割合（%）は？（10個まで入れて自動で合計）")
+    st.markdown("### ② 戦法ゲージ増加量（%）はありますか？")
+    st.write("10個まで入力できます。空欄は0として扱われます。")
     cols = st.columns(5)
+    X2_values = []
     for i in range(10):
         col = cols[i % 5]
-        st.session_state.X2_list[i] = col.number_input(
-            f"{i+1}個目", value=0.0, min_value=0.0, max_value=100.0, step=0.1, key=f"X2_{i}"
+        val = col.number_input(
+            f"{i+1}個目", value=0.0, min_value=0.0, max_value=100.0,
+            step=0.1, key=f"X2_{i}"
         )
-    st.button("次へ", on_click=next_page)
+        X2_values.append(val)
+    X2 = sum(X2_values)
+    st.write(f"合計: {X2:.2f}%")
+    if st.button("次へ"):
+        st.session_state.page = 3
 
-# ステップ3
+# ステップ 3: 敏活レベルの選択
 elif st.session_state.page == 3:
-    st.write("### ③ 敏活レベルは？")
-    options = {
+    st.markdown("### ③ 敏活レベルはいかほどで？")
+    levels = {
         "ないよ": 1.00,
         "敏活I": 1.02,
         "敏活II": 1.04,
         "敏活III": 1.07,
         "敏活IV": 1.10,
-        "敏活V": 1.15
+        "敏活V": 1.15,
     }
-    selected = st.radio("選んでね", list(options.keys()), horizontal=True)
-    st.session_state.X3 = options[selected]
-    st.button("次へ", on_click=next_page)
+    level_label = st.radio("敏活レベルを選んでください。", list(levels.keys()), key="X3", horizontal=True)
+    X3 = levels[level_label]
+    if st.button("次へ"):
+        st.session_state.page = 4
 
-# ステップ4：計算と表示
+# ステップ 4: その他の速度アップ入力
 elif st.session_state.page == 4:
+    st.markdown("### ④ 戦法速度アップ技能やアイテム（%）はありますか？")
+    st.write("10個まで入力できます。空欄は0として扱われます。")
+    cols = st.columns(5)
+    X4_values = []
+    for i in range(10):
+        col = cols[i % 5]
+        val = col.number_input(
+            f"{i+1}個目", value=0.0, min_value=0.0, max_value=100.0,
+            step=0.1, key=f"X4_{i}"
+        )
+        X4_values.append(val)
+    X4 = sum(X4_values)
+    st.write(f"合計: {X4:.2f}%")
+    if st.button("次へ"):
+        st.session_state.page = 5
+
+# ステップ 5: 結果表示
+elif st.session_state.page == 5:
     X1 = st.session_state.X1
-    X2 = sum(st.session_state.X2_list)
-    X3 = st.session_state.X3
+    X2 = sum([st.session_state.get(f"X2_{i}", 0.0) for i in range(10)])
+    X3 = levels[st.session_state.X3]
+    X4 = sum([st.session_state.get(f"X4_{i}", 0.0) for i in range(10)])
+    X5 = (X1 - X1 * X2 / 100) / (X3 + X4 / 100)
+    X6 = int(X5 // 2) * 2
 
-    X4 = (X1 - (X1 * X2 / 100)) / X3
-    X5 = int(X4 // 2) * 2
-
-    st.write("### ✨ 結果発表 ✨")
+    st.markdown("##✨ 結果発表 ✨")
     st.markdown(f"""
-    - 基本発動時間は **{X1}秒**
-    - 短縮割合は **{X2}%**
-    - 敏活効果は **{X3}**
-    - ➤ 戦法発動時間は **{X4:.2f}秒** の見込み！
-    - ➤ エフェクトは **{X5}秒** で発現します。知らんけど。
-    """)
+    基本発動時間は **{X1}秒**、短縮割合は **{X2:.2f}%**、  
+    敏活効果は **{X3:.2f}**、その他の効果は **{X4:.2f}%** なので、  
+    戦法発動時間は **{X5:.2f}秒** の見込みです！
 
-    st.button("🔁 再計算する", on_click=reset)
+    ちなみにエフェクトは **{X6}秒** で発現します。  
+    **知らんけど。**
+    """)
+    if st.button("🔄 再計算する", on_click=reset):
+        pass
