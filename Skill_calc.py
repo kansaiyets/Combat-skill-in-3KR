@@ -1,87 +1,90 @@
 import streamlit as st
 
-# ページ構成
-st.set_page_config(page_title="戦法発動計算アプリ", layout="centered")
-
-# セッションステート初期化
+# ページ番号の初期化
 if "page" not in st.session_state:
     st.session_state.page = 1
 
-# 再計算ボタンでリセット
-def reset():
-    st.session_state.page = 1
-    for key in list(st.session_state.keys()):
-        if key != "page":
-            del st.session_state[key]
+# 敏活レベル対応辞書
+levels = {
+    "ないよ": 1.00,
+    "敏活I": 1.02,
+    "敏活II": 1.04,
+    "敏活III": 1.07,
+    "敏活IV": 1.10,
+    "敏活V": 1.15,
+}
 
-# ステップ 1: 基本発動時間の選択
+# 再計算ボタンで初期化
+def reset():
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    st.session_state.page = 1
+
+st.title("戦法発動時間チェッカー")
+
+# ①ページ：基本の戦法発動時間
 if st.session_state.page == 1:
     st.markdown("### ① 基本の戦法発動時間は何秒ですか？")
-    X1 = st.radio("発動時間", [10, 15, 20, 25, 30], key="X1", horizontal=True)
-    if st.button("次へ"):
-        st.session_state.page = 2
+    selected_time = st.radio("選択してください", [10, 15, 20, 25, 30], key="X1")
+    if selected_time:
+        if st.button("次へ"):
+            st.session_state.page += 1
+    else:
+        st.warning("選択してください。")
 
-# ステップ 2: 戦法ゲージ増加量の入力
+# ②ページ：戦法ゲージ増加量（X2）
 elif st.session_state.page == 2:
-    st.markdown("### ② 戦法ゲージ増加量（%）はありますか？")
-    st.write("10個まで入力できます。空欄は0として扱われます。")
-    cols = st.columns(5)
+    st.markdown("### ② 戦法ゲージ増加量（%）はありますか？（小数OK）")
     X2_values = []
+    cols = st.columns(5)
     for i in range(10):
-        col = cols[i % 5]
-        val = col.number_input(
-            f"{i+1}個目", value=0.0, min_value=0.0, max_value=100.0,
-            step=0.1, key=f"X2_{i}"
-        )
-        X2_values.append(val)
-    X2 = sum(X2_values)
-    st.write(f"合計: {X2:.2f}%")
-    if st.button("次へ"):
-        st.session_state.page = 3
+        with cols[i % 5]:
+            val = st.number_input(f"{i+1}個目", min_value=0.0, step=0.1, key=f"X2_{i}")
+            X2_values.append(val)
+    if any(v > 0 for v in X2_values):
+        if st.button("次へ"):
+            st.session_state.page += 1
+    else:
+        st.warning("少なくとも1つは入力してください。")
 
-# ステップ 3: 敏活レベルの選択
+# ③ページ：敏活レベル（X3）
 elif st.session_state.page == 3:
     st.markdown("### ③ 敏活レベルはいかほどで？")
-    levels = {
-        "ないよ": 1.00,
-        "敏活I": 1.02,
-        "敏活II": 1.04,
-        "敏活III": 1.07,
-        "敏活IV": 1.10,
-        "敏活V": 1.15,
-    }
-    level_label = st.radio("敏活レベル", list(levels.keys()), key="X3", horizontal=True)
-    X3 = levels[level_label]
-    if st.button("次へ"):
-        st.session_state.page = 4
+    selected_level = st.radio("選んでください", list(levels.keys()), key="X3")
+    if selected_level:
+        if st.button("次へ"):
+            st.session_state.page += 1
+    else:
+        st.warning("選択してください。")
 
-# ステップ 4: その他の速度アップ入力
+# ④ページ：戦法速度アップ（X4）
 elif st.session_state.page == 4:
-    st.markdown("### ④ 戦法速度アップ技能やアイテム（%）はありますか？")
-    st.write("10個まで入力できます。空欄は0として扱われます。")
-    cols = st.columns(5)
+    st.markdown("### ④ 戦法速度アップ技能やアイテム（%）はありますか？（小数OK）")
     X4_values = []
+    cols = st.columns(5)
     for i in range(10):
-        col = cols[i % 5]
-        val = col.number_input(
-            f"{i+1}個目", value=0.0, min_value=0.0, max_value=100.0,
-            step=0.1, key=f"X4_{i}"
-        )
-        X4_values.append(val)
-    X4 = sum(X4_values)
-    st.write(f"合計: {X4:.2f}%")
-    if st.button("次へ"):
-        st.session_state.page = 5
+        with cols[i % 5]:
+            val = st.number_input(f"{i+1}個目", min_value=0.0, step=0.1, key=f"X4_{i}")
+            X4_values.append(val)
+    if any(v > 0 for v in X4_values):
+        if st.button("次へ"):
+            st.session_state.page += 1
+    else:
+        st.warning("少なくとも1つは入力してください。")
 
-# ステップ 5: 結果表示
+# ⑤ページ：結果表示
 elif st.session_state.page == 5:
-    X1 = st.session_state.X1
+    # 値の取得
+    X1 = st.session_state.get("X1")
     X2 = sum([st.session_state.get(f"X2_{i}", 0.0) for i in range(10)])
-    X3 = levels[st.session_state.X3]
+    X3 = levels.get(st.session_state.get("X3"), 1.0)
     X4 = sum([st.session_state.get(f"X4_{i}", 0.0) for i in range(10)])
+
+    # 計算
     X5 = (X1 - X1 * X2 / 100) / (X3 + X4 / 100)
     X6 = int(X5 // 2) * 2
 
+    # 結果表示
     st.markdown("## 🧮 結果")
     st.markdown(f"""
     基本発動時間は **{X1}秒**、短縮割合は **{X2:.2f}%**、  
@@ -91,5 +94,6 @@ elif st.session_state.page == 5:
     ちなみにエフェクトは **{X6}秒** で発現します。  
     **知らんけど。**
     """)
+
     if st.button("🔄 再計算する", on_click=reset):
         pass
