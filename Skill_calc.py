@@ -35,7 +35,7 @@ if st.session_state.page == 1:
 st.write(X1)
 
 # ②ページ：戦法ゲージ増加量（X2）
-elif st.session_state.page == 2:
+if st.session_state.page == 2:
     st.markdown("### ② 戦法ゲージ増加量（%）はありますか？（小数OK）")
     cols = st.columns(5)
     for i in range(10):
