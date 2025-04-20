@@ -41,11 +41,8 @@ elif st.session_state.page == 2:
         with cols[i % 5]:
             val = st.number_input(f"{i+1}個目", min_value=0.0, step=0.1, key=f"X2_{i}")
             X2_values.append(val)
-    if any(v > 0 for v in X2_values):
-        if st.button("次へ"):
-            st.session_state.page += 1
-    else:
-        st.warning("少なくとも1つは入力してください。")
+    if st.button("次へ"):
+        st.session_state.page += 1
 
 # ③ページ：敏活レベル（X3）
 elif st.session_state.page == 3:
@@ -66,11 +63,8 @@ elif st.session_state.page == 4:
         with cols[i % 5]:
             val = st.number_input(f"{i+1}個目", min_value=0.0, step=0.1, key=f"X4_{i}")
             X4_values.append(val)
-    if any(v > 0 for v in X4_values):
-        if st.button("次へ"):
-            st.session_state.page += 1
-    else:
-        st.warning("少なくとも1つは入力してください。")
+    if st.button("次へ"):
+       st.session_state.page += 1
 
 # ⑤ページ：結果表示
 elif st.session_state.page == 5:
