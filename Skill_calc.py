@@ -27,7 +27,6 @@ if st.session_state.page == 1:
     st.markdown("### ① 基本の戦法発動時間は何秒ですか？")
     selected_time = st.radio("選択してください", [10, 15, 20, 25, 30], key="X1")  # ここで自動的に st.session_state["X1"] に入る
     if selected_time:
-        st.write(X1)
         if st.button("次へ"):
             st.session_state.page += 1
     else:
