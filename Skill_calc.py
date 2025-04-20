@@ -25,9 +25,8 @@ st.title("戦法発動時間チェッカー")
 # ①ページ：基本の戦法発動時間
 if st.session_state.page == 1:
     st.markdown("### ① 基本の戦法発動時間は何秒ですか？")
-    selected_time = st.radio("選択してください", [10, 15, 20, 25, 30], key="X1")
-    if selected_time:
-        st.session_state.X1 = int(selected_time)  # 明示的に整数にしておく
+    st.radio("選択してください", [10, 15, 20, 25, 30], key="X1")
+    if "X1" in st.session_state:
         if st.button("次へ"):
             st.session_state.page += 1
     else:
@@ -36,20 +35,18 @@ if st.session_state.page == 1:
 # ②ページ：戦法ゲージ増加量（X2）
 elif st.session_state.page == 2:
     st.markdown("### ② 戦法ゲージ増加量（%）はありますか？（小数OK）")
-    X2_values = []
     cols = st.columns(5)
     for i in range(10):
         with cols[i % 5]:
-            val = st.number_input(f"{i+1}個目", min_value=0.0, step=0.1, key=f"X2_{i}")
-            X2_values.append(val)
+            st.number_input(f"{i+1}個目", min_value=0.0, step=0.1, key=f"X2_{i}")
     if st.button("次へ"):
         st.session_state.page += 1
 
 # ③ページ：敏活レベル（X3）
 elif st.session_state.page == 3:
     st.markdown("### ③ 敏活レベルはいかほどで？")
-    selected_level = st.radio("選んでください", list(levels.keys()), key="X3")
-    if selected_level:
+    st.radio("選んでください", list(levels.keys()), key="X3")
+    if "X3" in st.session_state:
         if st.button("次へ"):
             st.session_state.page += 1
     else:
@@ -58,19 +55,17 @@ elif st.session_state.page == 3:
 # ④ページ：戦法速度アップ（X4）
 elif st.session_state.page == 4:
     st.markdown("### ④ 戦法速度アップ技能やアイテム（%）はありますか？（小数OK）")
-    X4_values = []
     cols = st.columns(5)
     for i in range(10):
         with cols[i % 5]:
-            val = st.number_input(f"{i+1}個目", min_value=0.0, step=0.1, key=f"X4_{i}")
-            X4_values.append(val)
+            st.number_input(f"{i+1}個目", min_value=0.0, step=0.1, key=f"X4_{i}")
     if st.button("次へ"):
-       st.session_state.page += 1
+        st.session_state.page += 1
 
 # ⑤ページ：結果表示
 elif st.session_state.page == 5:
     # 値の取得
-    X1 = st.session_state.get("X1")
+    X1 = st.session_state.get("X1", 0)
     X2 = sum([st.session_state.get(f"X2_{i}", 0.0) for i in range(10)])
     X3 = levels.get(st.session_state.get("X3"), 1.0)
     X4 = sum([st.session_state.get(f"X4_{i}", 0.0) for i in range(10)])
