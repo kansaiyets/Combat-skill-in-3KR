@@ -1,7 +1,7 @@
 import streamlit as st
 
 # ページ構成
-st.set_page_config(page_title="戦法発動計算時間推定", layout="centered")
+st.set_page_config(page_title="戦法発動計算アプリ", layout="centered")
 
 # セッションステート初期化
 if "page" not in st.session_state:
@@ -17,13 +17,9 @@ def reset():
 # ステップ 1: 基本発動時間の選択
 if st.session_state.page == 1:
     st.markdown("### ① 基本の戦法発動時間は何秒ですか？")
-    st.session_state.X1 = st.radio(
-        "選択してください",
-        [10, 15, 20, 25, 30],
-        index=0,
-        horizontal=True
-    )
-    st.session_state.page = 2
+    X1 = st.radio("発動時間", [10, 15, 20, 25, 30], key="X1", horizontal=True)
+    if st.button("次へ"):
+        st.session_state.page = 2
 
 # ステップ 2: 戦法ゲージ増加量の入力
 elif st.session_state.page == 2:
@@ -54,7 +50,7 @@ elif st.session_state.page == 3:
         "敏活IV": 1.10,
         "敏活V": 1.15,
     }
-    level_label = st.radio("敏活レベルを選んでください。", list(levels.keys()), key="X3", horizontal=True)
+    level_label = st.radio("敏活レベル", list(levels.keys()), key="X3", horizontal=True)
     X3 = levels[level_label]
     if st.button("次へ"):
         st.session_state.page = 4
@@ -86,7 +82,7 @@ elif st.session_state.page == 5:
     X5 = (X1 - X1 * X2 / 100) / (X3 + X4 / 100)
     X6 = int(X5 // 2) * 2
 
-    st.markdown("##✨ 結果発表 ✨")
+    st.markdown("## 🧮 結果")
     st.markdown(f"""
     基本発動時間は **{X1}秒**、短縮割合は **{X2:.2f}%**、  
     敏活効果は **{X3:.2f}**、その他の効果は **{X4:.2f}%** なので、  
