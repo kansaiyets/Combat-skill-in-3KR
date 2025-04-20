@@ -17,9 +17,13 @@ def reset():
 # ステップ 1: 基本発動時間の選択
 if st.session_state.page == 1:
     st.markdown("### ① 基本の戦法発動時間は何秒ですか？")
-    X1 = st.radio("発動時間", [10, 15, 20, 25, 30], key="X1", horizontal=True)
-    if st.button("次へ"):
-        st.session_state.page = 2
+    st.session_state.X1 = st.radio(
+        "選択してください",
+        [10, 15, 20, 25, 30],
+        index=0,
+        horizontal=True
+    )
+    st.session_state.page = 2
 
 # ステップ 2: 戦法ゲージ増加量の入力
 elif st.session_state.page == 2:
