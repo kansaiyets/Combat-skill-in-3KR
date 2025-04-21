@@ -53,12 +53,12 @@ elif st.session_state.page == 2:
 elif st.session_state.page == 3:
     st.write("### ③ 敏活レベルは？")
     options = {
-        "ないです。": 1.00,
-        "敏活I": 1.02,
-        "敏活II": 1.04,
-        "敏活III": 1.07,
-        "敏活IV": 1.10,
-        "敏活V": 1.15
+        "ないです。": 0.00,
+        "敏活I": 0.02,
+        "敏活II": 0.04,
+        "敏活III": 0.07,
+        "敏活IV": 0.10,
+        "敏活V": 0.15
     }
     selected = st.radio("下から1つ選んでください。", list(options.keys()), horizontal=True)
     st.session_state.X3 = options[selected]
@@ -68,12 +68,12 @@ elif st.session_state.page == 3:
 elif st.session_state.page == 4:
     st.write("### ③ 羌敏活レベルは？")
     options = {
-        "ただいま研究中。": 1.00,
-        "羌敏活I": 1.02,
-        "羌敏活II": 1.04,
-        "羌敏活III": 1.07,
-        "羌敏活IV": 1.10,
-        "堂々の羌敏活V": 1.15
+        "ただいま研究中。": 0.00,
+        "羌敏活I": 0.02,
+        "羌敏活II": 0.04,
+        "羌敏活III": 0.07,
+        "羌敏活IV": 0.10,
+        "堂々の羌敏活V": 0.15
     }
     selected = st.radio("また1つ選んでください。", list(options.keys()), horizontal=True)
     st.session_state.X4 = options[selected]
@@ -98,7 +98,7 @@ elif st.session_state.page == 6:
     X4 = st.session_state.X4
     X5 = sum(st.session_state.X5_list)
 
-    X6 = (X1 - (X1 * X2 / 100)) / (X3 + X4 + X5 / 100)
+    X6 = (X1 - (X1 * X2 / 100)) / (1 + X3 + X4 + X5 / 100)
     X7 = int(X6 // 2) * 2
 
     st.write("### ✨ 結果発表 ✨")
