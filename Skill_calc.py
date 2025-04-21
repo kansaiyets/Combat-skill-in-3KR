@@ -27,7 +27,8 @@ st.title("戦法発動時間チェッカー")
 if st.session_state.page == 1:
     st.markdown("### ① 基本の戦法発動時間は何秒ですか？")
     options = [10, 15, 20, 25, 30]
-    st.radio("選択してください", options, key="X1", index=0)
+    selected = st.radio("選択してください", options, index=0)
+    st.session_state["X1"] = selected  # 明示的に保存！
 
     if st.button("次へ", key="next1"):
         st.session_state.page += 1
