@@ -25,12 +25,13 @@ st.title("戦法発動時間チェッカー")
 # ①ページ：基本の戦法発動時間
 if st.session_state.page == 1:
     st.markdown("### ① 基本の戦法発動時間は何秒ですか？")
-    selected_time = st.radio("選択してください", [10, 15, 20, 25, 30], key="X1")
-    if selected_time:
-        if st.button("次へ", key="next1"):
+    st.radio("選択してください", [10, 15, 20, 25, 30], key="X1")
+    
+    if st.button("次へ", key="next1"):
+        if "X1" in st.session_state:
             st.session_state.page += 1
-    else:
-        st.warning("選択してください。")
+        else:
+            st.warning("選択してください。")
 
 # ②ページ：戦法ゲージ増加量（X2）
 elif st.session_state.page == 2:
