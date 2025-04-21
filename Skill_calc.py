@@ -100,8 +100,8 @@ elif st.session_state.page == 6:
 
     X6 = (X1 - (X1 * X2 / 100)) / (1 + X3 + X4 + X5 / 100)
     X7 = int(X6 // 2) * 2
-    X31 = X3 * 100
-    X41 = X4 * 100
+    X31 = int(X3 * 100)
+    X41 = int(X4 * 100)
 
     st.write("### ✨ 結果発表 ✨")
     st.markdown(f"""
