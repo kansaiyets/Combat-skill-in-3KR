@@ -85,7 +85,7 @@ elif st.session_state.page == 5:
     cols = st.columns(5)
     for i in range(10):
         col = cols[i % 5]
-        st.session_state.X4_list[i] = col.number_input(
+        st.session_state.X5_list[i] = col.number_input(
             f"{i+1}個目", value=0.0, min_value=0.0, step=0.1, key=f"X4_{i}"
         )
     st.button("次へ", on_click=next_page)
