@@ -10,9 +10,9 @@ if "X2_list" not in st.session_state:
 if "X3" not in st.session_state:
     st.session_state.X3 = None
 if "X4" not in st.session_state:
-    st.session_state.X3 = None
+    st.session_state.X4 = None
 if "X5_list" not in st.session_state:
-    st.session_state.X4_list = [0.0] * 10
+    st.session_state.X5_list = [0.0] * 10
 
 # ページ操作
 def next_page():
