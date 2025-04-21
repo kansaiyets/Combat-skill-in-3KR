@@ -9,7 +9,9 @@ if "X2_list" not in st.session_state:
     st.session_state.X2_list = [0.0] * 10
 if "X3" not in st.session_state:
     st.session_state.X3 = None
-if "X4_list" not in st.session_state:
+if "X4" not in st.session_state:
+    st.session_state.X3 = None
+if "X5_list" not in st.session_state:
     st.session_state.X4_list = [0.0] * 10
 
 # ページ操作
@@ -21,14 +23,15 @@ def reset():
     st.session_state.X1 = None
     st.session_state.X2_list = [0.0] * 10
     st.session_state.X3 = None
-    st.session_state.X4_list = [0.0] * 10
+    st.session_state.X4 = None
+    st.session_state.X5_list = [0.0] * 10
 
 # ページ1：基本の戦法発動時間
 if st.session_state.page == 1:
-    st.title("戦法発動時間チェッカー")
+    st.title("戦法発動時間の推定ツール")
     st.write("### ① 基本の戦法発動時間は？")
     st.session_state.X1 = st.radio(
-        "選択してください",
+        "秒数を選択してください。",
         [10, 15, 20, 25, 30],
         index=0,
         horizontal=True
@@ -50,19 +53,34 @@ elif st.session_state.page == 2:
 elif st.session_state.page == 3:
     st.write("### ③ 敏活レベルは？")
     options = {
-        "ないよ": 1.00,
+        "ないです。": 1.00,
         "敏活I": 1.02,
         "敏活II": 1.04,
         "敏活III": 1.07,
         "敏活IV": 1.10,
         "敏活V": 1.15
     }
-    selected = st.radio("選んでね", list(options.keys()), horizontal=True)
+    selected = st.radio("下から1つ選んでください。", list(options.keys()), horizontal=True)
     st.session_state.X3 = options[selected]
     st.button("次へ", on_click=next_page)
 
-# ページ4：戦法速度アップ（X4）
+# ページ3：羌敏活レベル（X4）
 elif st.session_state.page == 4:
+    st.write("### ③ 羌敏活レベルは？")
+    options = {
+        "今頑張って研究しています。": 1.00,
+        "羌敏活I": 1.02,
+        "羌敏活II": 1.04,
+        "羌敏活III": 1.07,
+        "羌敏活IV": 1.10,
+        "堂々の羌敏活V": 1.15
+    }
+    selected = st.radio("また1つ選んでください。", list(options.keys()), horizontal=True)
+    st.session_state.X4 = options[selected]
+    st.button("次へ", on_click=next_page)
+
+# ページ5：戦法速度アップ（X5）
+elif st.session_state.page == 5:
     st.write("### ④ 戦法速度アップ技能やアイテム（%）はありますか？（最大10個まで、小数OK）")
     cols = st.columns(5)
     for i in range(10):
@@ -72,25 +90,27 @@ elif st.session_state.page == 4:
         )
     st.button("次へ", on_click=next_page)
 
-# ページ5：結果表示
-elif st.session_state.page == 5:
+# ページ6：結果表示
+elif st.session_state.page == 6:
     X1 = st.session_state.X1
     X2 = sum(st.session_state.X2_list)
     X3 = st.session_state.X3
-    X4 = sum(st.session_state.X4_list)
+    X4 = st.session_state.X4
+    X5 = sum(st.session_state.X5_list)
 
-    X5 = (X1 - (X1 * X2 / 100)) / (X3 + X4 / 100)
-    X6 = int(X5 // 2) * 2
+    X6 = (X1 - (X1 * X2 / 100)) / (X3 + X4 + X5 / 100)
+    X7 = int(X6 // 2) * 2
 
     st.write("### ✨ 結果発表 ✨")
     st.markdown(f"""
     - 基本発動時間：**{X1}秒**  
     - 戦法ゲージ短縮割合：**{X2:.2f}%**  
     - 敏活効果（係数）：**{X3:.2f}**  
-    - その他の加速効果：**{X4:.2f}%**
+    - 羌敏活効果（係数）：**{X4:.2f}**  
+    - その他の加速効果：**{X5:.2f}%**
 
-    🧮 **戦法発動時間は {X5:.2f}秒 の見込み！**  
-    🌟 **エフェクトは {X6}秒 で発現します（たぶん）。**
+    🧮 **吾輩のがばがば計算だと戦法発動時間は {X6:.2f}秒 の見込み！**  
+    🌟 **エフェクトは {X7}秒 で発現するんとちゃうかな。（たぶん。知らんけど。）**
     """)
 
     st.button("🔁 再計算する", on_click=reset)
