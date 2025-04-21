@@ -68,7 +68,7 @@ elif st.session_state.page == 3:
 elif st.session_state.page == 4:
     st.write("### ③ 羌敏活レベルは？")
     options = {
-        "今頑張って研究しています。": 1.00,
+        "ただいま研究中。": 1.00,
         "羌敏活I": 1.02,
         "羌敏活II": 1.04,
         "羌敏活III": 1.07,
@@ -86,7 +86,7 @@ elif st.session_state.page == 5:
     for i in range(10):
         col = cols[i % 5]
         st.session_state.X5_list[i] = col.number_input(
-            f"{i+1}個目", value=0.0, min_value=0.0, step=0.1, key=f"X4_{i}"
+            f"{i+1}個目", value=0.0, min_value=0.0, step=0.1, key=f"X5_{i}"
         )
     st.button("次へ", on_click=next_page)
 
